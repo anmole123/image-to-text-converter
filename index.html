@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>🌈 Colorful Image to Text Converter 🖼️➡️📝</title>
+<style>
+  /* Reset and base styles */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f9f7ff 0%, #e9efff 100%);
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Sticky header */
+  header {
+    background: #5a4da7;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.15);
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+  }
+  .logo {
+    font-weight: 800;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    user-select: none;
+  }
+  .logo img {
+    height: 36px;
+    width: 36px;
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+  }
+  nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+  }
+  nav ul li a:hover,
+  nav ul li a:focus {
+    color: #f0c330;
+    outline: none;
+  }
+  main {
+    flex-grow: 1;
+    padding: 2rem 1rem 3rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    user-select: none;
+  }
+  h2.section-title {
+    font-size: 2rem;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    color: #5a4da7;
+    user-select: none;
+  }
+  /* Image to Text Converter styling */
+  #converter {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 8px 20px rgb(90 77 167 / 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  #image-input {
+    border: 2px dashed #5a4da7;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 450px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #5a4da7;
+    font-size: 1.25rem;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+  }
+  #image-input.hover {
+    background-color: #e5e0ff;
+  }
+  #image-input input {
+    display: none;
+  }
+  button {
+    background: #5a4da7;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.8rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    user-select: none;
+  }
+  button:disabled {
+    background: #a29bdd;
+    cursor: not-allowed;
+  }
+  button:hover:not(:disabled),
+  button:focus:not(:disabled) {
+    background-color: #432e7a;
+    outline: none;
+  }
+  #output-text {
+    width: 100%;
+    max-width: 900px;
+    min-height: 180px;
+    border-radius: 12px;
+    border: 2px solid #5a4da7;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-family: 'Courier New', Courier, monospace;
+    white-space: pre-wrap;
+    background: #faf9ff;
+    resize: vertical;
+  }
+  .btn-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    max-width: 900px;
+  }
+
+  /* Testimonials */
+  #testimonials {
+    margin-top: 3rem;
+  }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .testimonial-card {
+    background: white;
+    padding: 1.6rem 1.4rem;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgb(90 77 167 / 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    user-select: none;
+  }
+  .testimonial-text {
+    font-style: italic;
+    font-size: 1rem;
+    color: #555;
+    flex-grow: 1;
+  }
+  .testimonial-author {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #5a4da7;
+    text-align: right;
+  }
+
+  /* FAQs */
+  #faqs {
+    margin-top: 3rem;
+  }
+  .faqs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+  .faq-card {
+    background: white;
+    padding: 1.4rem 1.4rem;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgb(90 77 167 / 0.1);
+    user-select: none;
+  }
+  .faq-question {
+    font-weight: 700;
+    color: #5a4da7;
+    margin-bottom: 0.5rem;
+  }
+  .faq-answer {
+    font-size: 0.95rem;
+    color: #444;
+  }
+
+  /* Footer */
+  footer {
+    background: #5a4da7;
+    color: white;
+    padding: 1rem 1rem;
+    text-align: center;
+    user-select: none;
+    font-size: 0.9rem;
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 480px) {
+    nav ul {
+      gap: 0.8rem;
+    }
+    h1 {
+      font-size: 2rem;
+    }
+    h2.section-title {
+      font-size: 1.5rem;
+    }
+    .btn-group {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="container">
+  <nav aria-label="Primary navigation">
+    <a href="#home" class="logo" aria-label="Site logo">
+      <img src="https://cdn-icons-png.flaticon.com/512/4149/4149056.png" alt="Page logo" />
+      <span>🖼️Textify</span>
+    </a>
+    <ul>
+      <li><a href="#home" title="Home">🏠 Home</a></li>
+      <li><a href="#converter" title="Image to Text Converter">🖼️ Image to Text Converter</a></li>
+      <li><a href="#privacy" title="Privacy Policy">🔒 Privacy</a></li>
+    </ul>
+  </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- Google Ad Top -->
+  <div class="container" aria-label="Top advertisement" style="margin-bottom: 1rem; text-align:center;">
+    <div id="ad-top" style="display:inline-block; margin: 0 auto;">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '9e444108ce409887f1051df7ffb512e8',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="//www.highperformanceformat.com/9e444108ce409887f1051df7ffb512e8/invoke.js"></script>
+    </div>
+  </div>
+
+  <section id="home" aria-label="Welcome section">
+    <h1>🌟 Welcome to Textify 🌟</h1>
+    <p style="font-size: 1.2rem; max-width: 760px; user-select:none;">
+      Convert your images to text instantly and effortlessly with our colorful and easy-to-use tool! Upload an image containing text, and we'll extract it for you. 📸➡️📝
+    </p>
+  </section>
+
+  <section id="converter" aria-label="Image to Text Converter tool">
+    <h2 class="section-title">🖼️ Image to Text Converter</h2>
+    <label id="image-input" for="fileInput" tabindex="0" aria-describedby="upload-description" role="button" aria-label="Upload image file">
+      Click or drag & drop an image here to upload
+      <input type="file" id="fileInput" accept="image/*" aria-describedby="upload-description" />
+    </label>
+    <p id="upload-description" style="font-size:0.9rem; color:#5a4da7; margin-top: -0.8rem; margin-bottom: 1rem; user-select:none;">Supported image formats: JPG, PNG, BMP, GIF</p>
+
+    <button id="convertBtn" disabled>✨ Convert to Text</button>
+    <textarea id="output-text" rows="8" placeholder="Extracted text will appear here..." readonly></textarea>
+    <div class="btn-group">
+      <button id="copyBtn" disabled>📋 Copy Text</button>
+      <button id="downloadBtn" disabled>💾 Download Text File</button>
+    </div>
+  </section>
+
+  <!-- Google Ad Middle -->
+  <div class="container" aria-label="Middle advertisement" style="margin: 2rem 0; text-align:center;">
+    <div id="ad-middle" style="display:inline-block; margin: 0 auto;">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '9e444108ce409887f1051df7ffb512e8',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="//www.highperformanceformat.com/9e444108ce409887f1051df7ffb512e8/invoke.js"></script>
+    </div>
+  </div>
+
+  <section id="testimonials" aria-label="User testimonials">
+    <h2 class="section-title">💬 What Our Users Say</h2>
+    <div class="testimonials-grid">
+      <article class="testimonial-card" tabindex="0">
+        <p class="testimonial-text">"This tool saved me HOURS of typing! The text extraction was so fast and accurate. Highly recommend! 😍"</p>
+        <p class="testimonial-author">- Mia T.</p>
+      </article>
+      <article class="testimonial-card" tabindex="0">
+        <p class="testimonial-text">"I love how colorful and fun this site is. The emoji touches really bring it to life! 🎨✨"</p>
+        <p class="testimonial-author">- Luis G.</p>
+      </article>
+      <article class="testimonial-card" tabindex="0">
+        <p class="testimonial-text">"Perfect solution for turning image-based receipts into editable text. Easy and quick! 💼🧾"</p>
+        <p class="testimonial-author">- Chen W.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Google Ad Bottom -->
+  <div class="container" aria-label="Bottom advertisement" style="margin: 2rem 0; text-align:center;">
+    <div id="ad-bottom" style="display:inline-block; margin: 0 auto;">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '9e444108ce409887f1051df7ffb512e8',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="//www.highperformanceformat.com/9e444108ce409887f1051df7ffb512e8/invoke.js"></script>
+    </div>
+  </div>
+
+  <section id="faqs" aria-label="Frequently asked questions">
+    <h2 class="section-title">❓ Frequently Asked Questions</h2>
+    <div class="faqs-grid">
+      <article class="faq-card" tabindex="0">
+        <h3 class="faq-question">How accurate is the text extraction? 🤔</h3>
+        <p class="faq-answer">While not perfect, our converter uses advanced technologies providing high accuracy especially for clear images and printed text.</p>
+      </article>
+      <article class="faq-card" tabindex="0">
+        <h3 class="faq-question">What image formats can I upload? 📷</h3>
+        <p class="faq-answer">We support JPG, PNG, BMP, and GIF formats for your convenience.</p>
+      </article>
+      <article class="faq-card" tabindex="0">
+        <h3 class="faq-question">Is my uploaded image stored? 🔒</h3>
+        <p class="faq-answer">No, all processing happens right in your browser and your images are not uploaded or saved.</p>
+      </article>
+      <article class="faq-card" tabindex="0">
+        <h3 class="faq-question">Can I download the extracted text? 💾</h3>
+        <p class="faq-answer">Yes! Simply click the download button after conversion to save the extracted text as a .txt file.</p>
+      </article>
+      <article class="faq-card" tabindex="0">
+        <h3 class="faq-question">Is this tool free to use? 🎉</h3>
+        <p class="faq-answer">Absolutely! This tool is completely free with no hidden fees or ads interruptions beyond basic placement.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- Google Ad Last -->
+  <div class="container" aria-label="Last advertisement" style="margin-top: 2rem; text-align:center;">
+    <div id="ad-last" style="display:inline-block; margin: 0 auto;">
+      <script type="text/javascript">
+        atOptions = {
+          'key' : '9e444108ce409887f1051df7ffb512e8',
+          'format' : 'iframe',
+          'height' : 90,
+          'width' : 728,
+          'params' : {}
+        };
+      </script>
+      <script type="text/javascript" src="//www.highperformanceformat.com/9e444108ce409887f1051df7ffb512e8/invoke.js"></script>
+    </div>
+  </div>
+
+  <section id="privacy" aria-label="Privacy information" style="margin: 3rem 0 1rem; text-align: center; font-size: 0.9rem; color: #666;">
+    <p>🔒 Your privacy is important to us. No images are uploaded to any server, all text extraction happens locally in your browser.</p>
+  </section>
+
+</main>
+
+<footer>
+  &copy; 2024 Textify — made with ❤️ and lots of 🖼️ ➡️ 📝
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.2/dist/tesseract.min.js"></script>
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const convertBtn = document.getElementById('convertBtn');
+  const outputText = document.getElementById('output-text');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const imageInputLabel = document.getElementById('image-input');
+
+  let selectedFile = null;
+
+  // Handle drag and drop styling
+  imageInputLabel.addEventListener('dragover', e => {
+    e.preventDefault();
+    imageInputLabel.classList.add('hover');
+  });
+  imageInputLabel.addEventListener('dragleave', e => {
+    e.preventDefault();
+    imageInputLabel.classList.remove('hover');
+  });
+  imageInputLabel.addEventListener('drop', e => {
+    e.preventDefault();
+    imageInputLabel.classList.remove('hover');
+    const dt = e.dataTransfer;
+    if (dt.files.length) {
+      fileInput.files = dt.files;
+      handleFileSelection();
+    }
+  });
+
+  // Handle file input change
+  fileInput.addEventListener('change', handleFileSelection);
+
+  // Enable/disable buttons based on output text
+  function updateActionButtons() {
+    const hasText = outputText.value.trim().length > 0;
+    downloadBtn.disabled = !hasText;
+    copyBtn.disabled = !hasText;
+  }
+
+  function handleFileSelection() {
+    selectedFile = fileInput.files[0];
+    if (selectedFile && selectedFile.type.startsWith('image/')) {
+      convertBtn.disabled = false;
+      outputText.value = '';
+      updateActionButtons();
+    } else {
+      convertBtn.disabled = true;
+      outputText.value = '';
+      updateActionButtons();
+    }
+  }
+
+  convertBtn.addEventListener('click', async () => {
+    if (!selectedFile) return;
+    convertBtn.disabled = true;
+    convertBtn.textContent = '⏳ Converting... Please wait';
+    outputText.value = '';
+    updateActionButtons();
+
+    try {
+      const { data: { text } } = await Tesseract.recognize(
+        selectedFile,
+        'eng',
+        {
+          logger: m => {
+            // progress could be handled here if needed
+          }
+        }
+      );
+      outputText.value = text.trim() || '[No text detected]';
+      updateActionButtons();
+    } catch (error) {
+      outputText.value = '[Error extracting text] Please try another image.';
+      updateActionButtons();
+    }
+    convertBtn.disabled = false;
+    convertBtn.textContent = '✨ Convert to Text';
+  });
+
+  downloadBtn.addEventListener('click', () => {
+    const text = outputText.value;
+    if (!text) return;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'extracted-text.txt';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 0);
+  });
+
+  copyBtn.addEventListener('click', () => {
+    const text = outputText.value;
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      copyBtn.textContent = '✔️ Copied!';
+      setTimeout(() => {
+        copyBtn.textContent = '📋 Copy Text';
+      }, 2000);
+    }).catch(() => {
+      alert('Failed to copy text to clipboard.');
+    });
+  });
+</script>
+
+</body>
+</html>
+
